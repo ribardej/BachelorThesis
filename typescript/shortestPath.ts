@@ -17,8 +17,8 @@ function readGraphFromFile(filePath: string): { vertices: Vertex[]; startVertexI
     const [totalEdges, startVertexId, goalVertexId] = lines[0].split(' ').map(Number);
 
     const vertices: Vertex[] = [];
-    for (let i = 0; i < totalEdges; i++) {
-        const [start, goal, price] = lines[i + 1].split(' ').map(Number);
+    for (let i = 1; i <= totalEdges; i++) {
+        const [start, goal, price] = lines[i].split(' ').map(Number);
         if (!vertices[start]) {
             vertices[start] = { id: start, edges: [] };
         }
