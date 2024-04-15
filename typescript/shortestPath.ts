@@ -1,5 +1,12 @@
+// Declare Deno namespace if targeting Deno environment
+// Note that this does not provide full compatibility with Node.js
+declare namespace Deno {
+    function readTextFileSync(filePath: string): string;
+    export const args: string[];
+}
+
 const denoEnv = typeof Deno !== 'undefined';
-const fs = denoEnv ? Deno : require('fs');
+const fs = denoEnv ? undefined : require('fs');
 
 type Vertex = {
     id: number;
@@ -36,18 +43,17 @@ function calculateMinimalCost(graph: { vertices: Vertex[]; startVertexId: number
     const { vertices, startVertexId, goalVertexId } = graph;
     const visited: boolean[] = [];
     const distances: number[] = [];
+
     for (let i = 0; i < vertices.length; i++) {
         visited[i] = false;
         distances[i] = Infinity;
     }
+
     distances[startVertexId] = 0;
-
     const queue: number[] = [startVertexId];
-
     while (queue.length > 0) {
         const currentVertexId = queue.shift()!;
         visited[currentVertexId] = true;
-
         for (const edge of vertices[currentVertexId]?.edges || []) {
             if (!visited[edge.goalVertexId] && distances[edge.goalVertexId] > distances[currentVertexId] + edge.price) {
                 distances[edge.goalVertexId] = distances[currentVertexId] + edge.price;
@@ -60,6 +66,5 @@ function calculateMinimalCost(graph: { vertices: Vertex[]; startVertexId: number
 }
 
 const filename: string = denoEnv ? Deno.args[0] : process.argv[2];
-const graphFilePath = filename;
-const graph = readGraphFromFile(graphFilePath);
+const graph = readGraphFromFile(filename);
 console.log(calculateMinimalCost(graph));
