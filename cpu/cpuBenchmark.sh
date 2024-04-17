@@ -16,7 +16,7 @@ runMatrix() {
     echo "$runtimeName: $output iterations made"
 }
 
-echo -e "\n1) Recursive computation of 43th fibonacci number"
+echo -e "\n1) Recursive computation of 43rd fibonacci number"
 run "Node" "node fibonacci.js"
 run "Deno" "deno run fibonacci.js"
 run "Bun" "bun fibonacci.js"
