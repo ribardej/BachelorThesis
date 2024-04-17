@@ -1,12 +1,13 @@
 #!/bin/bash
 
-run_solution() {
-    local benchmarkName=$1
-    local runtime=$2
-    local filename=$3
-    local expectedValue=$4
+filename=$1
+expectedValue=$2
 
-    local output=$( { time $runtime $filename; } 2>&1 )
+run() {
+    local benchmarkName=$1
+    local runCommand=$2
+
+    local output=$( { time $runCommand $filename; } 2>&1 )
     local elapsedTime=$(echo "$output" | grep real | awk '{print $2}')
     local solution=$(echo "$output" | head -n 1)
 
@@ -18,15 +19,15 @@ run_solution() {
     fi
 }
 
-graph=$1
-expectedValue=$2
+echo -e "\nTypeScript:"
+run "Node" "bash node.sh"
+run "Deno" "deno run --allow-read shortestPath.ts"
+run "Bun" "bun shortestPath.ts"
 
-run_solution "Node TS" "bash node.sh" "$graph" "$expectedValue"
-run_solution "Deno TS" "deno run --allow-read shortestPath.ts" "$graph" "$expectedValue"
-run_solution "Bun TS" "bun shortestPath.ts" "$graph" "$expectedValue"
-
-run_solution "Node JS" "node shortestPath.js" "$graph" "$expectedValue"
-run_solution "Deno JS" "deno run --allow-read shortestPath.js" "$graph" "$expectedValue"
-run_solution "Bun JS" "bun shortestPath.js" "$graph" "$expectedValue"
+echo -e "\nJavaScript:"
+run "Node" "node shortestPath.js"
+run "Deno" "deno run --allow-read shortestPath.js"
+run "Bun" "bun shortestPath.js"
+echo ""
 
 

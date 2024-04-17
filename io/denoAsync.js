@@ -6,7 +6,7 @@ const data = new Uint8Array(DATA_SIZE).fill(1);
 async function asyncWrite() {
     for (let i = 0; i < fileCount; i++) {
         const FILE_PATH = `testAsync${i}.txt`;
-        await Deno.writeFile(FILE_PATH, data, (err) => {
+        Deno.writeFile(FILE_PATH, data, (err) => {
             if (err) throw err;
         });
     }

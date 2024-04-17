@@ -1,1 +1,4 @@
 **/.DS_Store
+**/node_modules/@types
+**/node_modules/undici-types
+**/typescript/shortestPath.js

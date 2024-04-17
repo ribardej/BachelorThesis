@@ -1,13 +1,28 @@
 #!/bin/bash
 
-nodeFib=$( { time node fibonacci.js; } 2>&1 | grep real | awk '{print $2}' )
-nodeMatrix=$( node matrixMult.js )
+run() {
+    local runtimeName=$1
+    local runCommand=$2
 
-denoFib=$( { time deno run fibonacci.js; } 2>&1 | grep real | awk '{print $2}' )
-denoMatrix=$( deno run matrixMult.js )
+    local elapsedTime=$( { time $runCommand; } 2>&1 | grep real | awk '{print $2}')
+    echo "$runtimeName: $elapsedTime"
+}
 
-bunFib=$( { time bun fibonacci.js; } 2>&1 | grep real | awk '{print $2}' )
-bunMatrix=$( bun matrixMult.js )
+runMatrix() {
+    local runtimeName=$1
+    local runCommand=$2
 
-echo -e "1) Recursive calculation of 43. fibonnaci number\n Elapsed times:\n  Node.js: " $nodeFib "\n  Deno: " $denoFib "\n  Bun: " $bunFib "\n"
-echo -e "2) 10x10 Matrix multiplication for 1s\n Total iterations made:\n  Node.js: " $nodeMatrix "\n  Deno: " $denoMatrix "\n  Bun: " $bunMatrix "\n"
+    local output=$( { time $runCommand; } 2>&1 | head -n 1)
+    echo "$runtimeName: $output iterations made"
+}
+
+echo -e "\n1) Recursive computation of 43th fibonacci number"
+run "Node" "node fibonacci.js"
+run "Deno" "deno run fibonacci.js"
+run "Bun" "bun fibonacci.js"
+
+echo -e "\n2) 10x10 matrix multiplication for 1s"
+runMatrix "Node" "node matrixMult.js"
+runMatrix "Deno" "deno run matrixMult.js"
+runMatrix "Bun" "bun matrixMult.js"
+echo ""
