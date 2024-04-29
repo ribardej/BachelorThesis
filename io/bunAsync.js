@@ -1,7 +1,7 @@
 const fileCount = process.argv[2] || 500;
 const fileSize = process.argv[3] || 10
 const DATA_SIZE = 1024 * 1024 * fileSize;
-const data = Buffer.alloc(DATA_SIZE, 1);
+const data = Buffer.alloc(DATA_SIZE, "1");
 
 
 async function asyncWrite(){
