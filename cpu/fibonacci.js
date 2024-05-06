@@ -3,4 +3,4 @@ function fibonnaci(n) {
     return fibonnaci(n - 1) + fibonnaci(n - 2);
 }
 
-fibonnaci(43);
+fibonnaci(45);
