@@ -17,5 +17,6 @@ Ke spuštění výkonových testů použijte příkazy:<br>
 bash bench.sh graph.txt 7<br>
 bash bench.sh graphLarge.txt 48
 
-![results](./results/results.png)
+![result1](./results/result1.png)
+![result2](./results/result2.png)
 

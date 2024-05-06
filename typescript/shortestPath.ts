@@ -18,10 +18,10 @@ type Edge = {
     price: number;
 };
 
-function readGraphFromFile(filePath: string): { vertices: Vertex[]; startVertexId: number; goalVertexId: number } {
+function readGraphFromFile(filePath: string): { vertices: Vertex[]; startVertexId: number; finishVertexId: number } {
     const data: string = denoEnv ? Deno.readTextFileSync(filePath) : fs.readFileSync(filePath, 'utf8')
     const lines: string[] = data.split('\n');
-    const [totalEdges, startVertexId, goalVertexId] = lines[0].split(' ').map(Number);
+    const [totalEdges, startVertexId, finishVertexId] = lines[0].split(' ').map(Number);
 
     const vertices: Vertex[] = [];
     for (let i = 1; i <= totalEdges; i++) {
@@ -35,34 +35,37 @@ function readGraphFromFile(filePath: string): { vertices: Vertex[]; startVertexI
     return {
         vertices,
         startVertexId,
-        goalVertexId,
+        finishVertexId,
     };
 }
 
-function calculateMinimalCost(graph: { vertices: Vertex[]; startVertexId: number; goalVertexId: number }): number {
-    const { vertices, startVertexId, goalVertexId } = graph;
-    const visited: boolean[] = [];
-    const distances: number[] = [];
-
-    for (let i = 0; i < vertices.length; i++) {
-        visited[i] = false;
-        distances[i] = Infinity;
-    }
+function calculateMinimalCost(graph: { vertices: Vertex[]; startVertexId: number; finishVertexId: number }): number {
+    const { vertices, startVertexId, finishVertexId } = graph;
+    const visited: boolean[] = Array(vertices.length).fill(false);
+    const discovered: boolean[] = Array(vertices.length).fill(false);
+    const distances: number[] = Array(vertices.length).fill(Infinity);
 
     distances[startVertexId] = 0;
     const queue: number[] = [startVertexId];
     while (queue.length > 0) {
+        queue.sort((a, b) => distances[a] - distances[b]);
         const currentVertexId = queue.shift()!;
+        if (currentVertexId === finishVertexId) break;
+        if (distances[currentVertexId] === Infinity) break;
         visited[currentVertexId] = true;
-        for (const edge of vertices[currentVertexId]?.edges || []) {
-            if (!visited[edge.goalVertexId] && distances[edge.goalVertexId] > distances[currentVertexId] + edge.price) {
-                distances[edge.goalVertexId] = distances[currentVertexId] + edge.price;
-                queue.push(edge.goalVertexId);
+        
+        for (const edge of vertices[currentVertexId].edges) {
+            const goalId = edge.goalVertexId;
+            if (!visited[goalId] && distances[goalId] > distances[currentVertexId] + edge.price) {
+                distances[goalId] = distances[currentVertexId] + edge.price;
+                if (!discovered[goalId]) {
+                    queue.push(goalId);
+                    discovered[goalId] = true;
+                }
             }
         }
     }
-
-    return distances[goalVertexId];
+    return distances[finishVertexId];
 }
 
 const filename: string = denoEnv ? Deno.args[0] : process.argv[2];
